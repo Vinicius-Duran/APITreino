@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34221.43
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "apitreino", "apitreino\apitreino.csproj", "{4294DF22-C12C-417A-87AB-5DBDB2E570D4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4294DF22-C12C-417A-87AB-5DBDB2E570D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4294DF22-C12C-417A-87AB-5DBDB2E570D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4294DF22-C12C-417A-87AB-5DBDB2E570D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4294DF22-C12C-417A-87AB-5DBDB2E570D4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {324247B4-5514-4E62-900C-0CAF60338C2E}
+	EndGlobalSection
+EndGlobal
