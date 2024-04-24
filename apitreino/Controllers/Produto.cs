@@ -1,10 +1,10 @@
 ﻿namespace apitreino.Controllers
 {
-    public class Produto
+    public class Pessoas
     {
         public int Id { get; set; }
-        public string Nome { get; set; }
-        public decimal Preco { get; set; }
+        public string? Nome { get; set; }
+        public int? Idade { get; set; }
     }
 
 }

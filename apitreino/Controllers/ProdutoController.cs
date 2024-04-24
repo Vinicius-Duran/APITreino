@@ -6,58 +6,65 @@ namespace apitreino.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProdutoController : ControllerBase
+    public class PessoasController : ControllerBase
     {
-        private static List<Produto> _produtos = new List<Produto>();
-        private static int _contador = 1;
+        private readonly APIContexto _contexto;
+
+        public PessoasController(APIContexto contexto)
+        {
+            _contexto = contexto;
+        }
 
         [HttpGet]
-        public IEnumerable<Produto> Get()
+        public IEnumerable<Pessoas> Get()
         {
-            return _produtos;
+            return _contexto.Pessoass.ToList();
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var produto = _produtos.FirstOrDefault(p => p.Id == id);
-            if (produto == null)
+            var Pessoas = _contexto.Pessoass.FirstOrDefault(p => p.Id == id);
+            if (Pessoas == null)
             {
                 return NotFound();
             }
-            return Ok(produto);
+            return Ok(Pessoas);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Produto produto)
+        public IActionResult Post([FromBody] Pessoas Pessoas)
         {
-            produto.Id = _contador++;
-            _produtos.Add(produto);
-            return CreatedAtAction(nameof(Get), new { id = produto.Id }, produto);
+            _contexto.Pessoass.Add(Pessoas);
+            _contexto.SaveChanges(); 
+            return CreatedAtAction(nameof(Get), new { id = Pessoas.Id }, Pessoas);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Produto produto)
+        public IActionResult Put(int id, [FromBody] Pessoas Pessoas)
         {
-            var index = _produtos.FindIndex(p => p.Id == id);
-            if (index < 0)
+            if (id != Pessoas.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
-            _produtos[index] = produto;
+
+            _contexto.Entry(Pessoas).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _contexto.SaveChanges(); 
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var produto = _produtos.FirstOrDefault(p => p.Id == id);
-            if (produto == null)
+            var Pessoas = _contexto.Pessoass.Find(id);
+            if (Pessoas == null)
             {
                 return NotFound();
             }
-            _produtos.Remove(produto);
-            return Ok(produto);
+
+            _contexto.Pessoass.Remove(Pessoas);
+            _contexto.SaveChanges(); 
+            return Ok(Pessoas);
         }
     }
 }
