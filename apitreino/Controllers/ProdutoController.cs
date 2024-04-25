@@ -7,9 +7,9 @@ namespace apitreino.Controllers
     [Route("api/[controller]")]
     public class PessoasController : ControllerBase
     {
-        private readonly ServicoPessoas _servicoPessoas;
+        private readonly IServicoPessoas _servicoPessoas;
 
-        public PessoasController(ServicoPessoas servicoPessoas)
+        public PessoasController(IServicoPessoas servicoPessoas)
         {
             _servicoPessoas = servicoPessoas;
         }

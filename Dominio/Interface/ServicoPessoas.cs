@@ -1,5 +1,6 @@
 ﻿using apitreino;
 using apitreino.Controllers;
+using Dominio.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dominio.Interface
@@ -8,7 +9,7 @@ namespace Dominio.Interface
     {
     }
 }
-public class ServicoPessoas 
+public class ServicoPessoas : IServicoPessoas
 {
     private readonly APIContexto _context;
 

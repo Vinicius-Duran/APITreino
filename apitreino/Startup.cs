@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dominio.Interface;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 namespace apitreino
@@ -26,7 +27,7 @@ namespace apitreino
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NomeDaSuaAPI", Version = "v1" });
             });
             services.AddCors();
-            services.AddScoped<ServicoPessoas>();
+            services.AddScoped<IServicoPessoas, ServicoPessoas>();
 
         }
 
