@@ -26,6 +26,8 @@ namespace apitreino
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NomeDaSuaAPI", Version = "v1" });
             });
             services.AddCors();
+            services.AddScoped<ServicoPessoas>();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

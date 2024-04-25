@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
+using Dominio.Interface;
 
 namespace apitreino.Controllers
 {
@@ -8,63 +7,67 @@ namespace apitreino.Controllers
     [Route("api/[controller]")]
     public class PessoasController : ControllerBase
     {
-        private readonly APIContexto _contexto;
+        private readonly ServicoPessoas _servicoPessoas;
 
-        public PessoasController(APIContexto contexto)
+        public PessoasController(ServicoPessoas servicoPessoas)
         {
-            _contexto = contexto;
+            _servicoPessoas = servicoPessoas;
         }
 
         [HttpGet]
-        public IEnumerable<Pessoas> Get()
+        public IActionResult Get()
         {
-            return _contexto.Pessoass.ToList();
+            var pessoas = _servicoPessoas.Listar();
+            return Ok(pessoas);
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var Pessoas = _contexto.Pessoass.FirstOrDefault(p => p.Id == id);
-            if (Pessoas == null)
+            var pessoa = _servicoPessoas.ObterPorId(id);
+            if (pessoa == null)
             {
                 return NotFound();
             }
-            return Ok(Pessoas);
+            return Ok(pessoa);
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] Pessoas Pessoas)
+        public IActionResult Post([FromBody] Pessoas pessoa)
         {
-            _contexto.Pessoass.Add(Pessoas);
-            _contexto.SaveChanges(); 
-            return CreatedAtAction(nameof(Get), new { id = Pessoas.Id }, Pessoas);
+            var novaPessoa = _servicoPessoas.Adicionar(pessoa);
+            return CreatedAtAction(nameof(Get), new { id = novaPessoa.Id }, novaPessoa);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Pessoas Pessoas)
+        public IActionResult Put(int id, [FromBody] Pessoas pessoa)
         {
-            if (id != Pessoas.Id)
+            if (id != pessoa.Id)
             {
                 return BadRequest();
             }
 
-            _contexto.Entry(Pessoas).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _contexto.SaveChanges(); 
+            var pessoaExistente = _servicoPessoas.ObterPorId(id);
+            if (pessoaExistente == null)
+            {
+                return NotFound();
+            }
+
+            var pessoaAtualizada = _servicoPessoas.Editar(pessoa);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var Pessoas = _contexto.Pessoass.Find(id);
-            if (Pessoas == null)
+            var pessoa = _servicoPessoas.ObterPorId(id);
+            if (pessoa == null)
             {
                 return NotFound();
             }
 
-            _contexto.Pessoass.Remove(Pessoas);
-            _contexto.SaveChanges(); 
-            return Ok(Pessoas);
+            _servicoPessoas.Remover(id);
+            return Ok(pessoa);
         }
     }
 }
