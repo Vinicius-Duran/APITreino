@@ -16,8 +16,12 @@ namespace apitreino
         public void ConfigureServices(IServiceCollection services)
         {
             // Configuração do DbContext
-            services.AddDbContext<APIContexto>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<APIContexto>(options => {
+                options.UseLazyLoadingProxies();
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                builder => builder.MigrationsAssembly("apitreino"));
+            }); 
+
 
 
             // Outros serviços
@@ -28,6 +32,8 @@ namespace apitreino
             });
             services.AddCors();
             services.AddScoped<IServicoPessoas, ServicoPessoas>();
+
+           
 
         }
 

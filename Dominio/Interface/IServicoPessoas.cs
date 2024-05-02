@@ -1,9 +1,5 @@
-﻿using apitreino.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using apitreino;
+using Dominio.Entidades;
 
 namespace Dominio.Interface
 {
@@ -14,5 +10,8 @@ namespace Dominio.Interface
         IEnumerable<Pessoas> Listar();
         Pessoas ObterPorId(int id);
         void Remover(int id);
+        Endereco AdicionarEndereco(int pessoaId, Endereco endereco);
+        Endereco ObterEndereco(int pessoaId);
+
     }
 }

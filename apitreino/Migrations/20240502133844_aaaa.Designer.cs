@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using apitreino;
 
@@ -11,9 +12,11 @@ using apitreino;
 namespace apitreino.Migrations
 {
     [DbContext(typeof(APIContexto))]
-    partial class APIContextoModelSnapshot : ModelSnapshot
+    [Migration("20240502133844_aaaa")]
+    partial class aaaa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

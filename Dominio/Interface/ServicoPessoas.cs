@@ -1,58 +1,86 @@
 ﻿using apitreino;
-using apitreino.Controllers;
-using Dominio.Interface;
 using Microsoft.EntityFrameworkCore;
+using Dominio.Entidades;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Dominio.Interface
 {
-    internal class ServicoPessoas
+    public class ServicoPessoas : IServicoPessoas
     {
-    }
-}
-public class ServicoPessoas : IServicoPessoas
-{
-    private readonly APIContexto _context;
+        private readonly APIContexto _context;
 
-    public ServicoPessoas(APIContexto context)
-    {
-        _context = context;
-    }
-
-    public Pessoas Adicionar(Pessoas Pessoas)
-    {
-        _context.Set<Pessoas>().Add(Pessoas);
-        _context.SaveChanges();
-        return Pessoas;
-    }
-
-    public Pessoas Editar(Pessoas Pessoas)
-    {
-        _context.Entry(Pessoas).State = EntityState.Modified;
-        _context.SaveChanges();
-        return Pessoas;
-    }
-    public IEnumerable<Pessoas> Listar()
-    {
-        return _context.Set<Pessoas>().ToList();
-    }
-
-    public void Remover(int id)
-    {
-        var Pessoas = _context.Set<Pessoas>().Find(id);
-        if (Pessoas != null)
+        public ServicoPessoas(APIContexto context)
         {
-            _context.Set<Pessoas>().Remove(Pessoas);
+            _context = context;
+        }
+
+        public Pessoas Adicionar(Pessoas pessoa)
+        {
+            _context.Set<Pessoas>().Add(pessoa);
             _context.SaveChanges();
+            return pessoa;
         }
-        else
+
+        public Pessoas Editar(Pessoas pessoa)
         {
-            throw new InvalidOperationException("Pessoas não encontrado para remoção.");
+            _context.Entry(pessoa).State = EntityState.Modified;
+            _context.SaveChanges();
+            return pessoa;
+        }
+
+        public IEnumerable<Pessoas> Listar()
+        {
+            return _context.Set<Pessoas>().ToList();
+        }
+
+        public void Remover(int id)
+        {
+            var pessoa = _context.Set<Pessoas>().Find(id);
+            if (pessoa != null)
+            {
+                _context.Set<Pessoas>().Remove(pessoa);
+                _context.SaveChanges();
+            }
+            else
+            {
+                throw new InvalidOperationException("Pessoa não encontrada para remoção.");
+            }
+        }
+
+        public Pessoas ObterPorId(int id)
+        {
+            return _context.Set<Pessoas>().Find(id);
+        }
+
+        // Novos métodos para lidar com operações de endereço
+
+        public Endereco AdicionarEndereco(int pessoaId, Endereco endereco)
+        {
+            var pessoa = _context.Set<Pessoas>().Find(pessoaId);
+            if (pessoa != null)
+            {
+                pessoa.Endereco = endereco;
+                _context.SaveChanges();
+                return endereco;
+            }
+            else
+            {
+                throw new InvalidOperationException("Pessoa não encontrada para adicionar endereço.");
+            }
+        }
+
+        public Endereco ObterEndereco(int pessoaId)
+        {
+            var pessoa = _context.Set<Pessoas>().Find(pessoaId);
+            if (pessoa != null)
+            {
+                return pessoa.Endereco;
+            }
+            else
+            {
+                throw new InvalidOperationException("Pessoa não encontrada para obter endereço.");
+            }
         }
     }
-
-    public Pessoas ObterPorId(int id)
-    {
-        return _context.Set<Pessoas>().Find(id);
-    }
-
 }
