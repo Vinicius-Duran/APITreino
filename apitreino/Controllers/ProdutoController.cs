@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Dominio.Interface;
 using Dominio.Entidades;
+using Microsoft.EntityFrameworkCore;
 
 namespace apitreino.Controllers
 {
@@ -36,9 +37,16 @@ namespace apitreino.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] Pessoas pessoa)
         {
-            var novaPessoa = _servicoPessoas.Adicionar(pessoa);
-            return CreatedAtAction(nameof(Get), new { id = novaPessoa.Id }, novaPessoa);
+            var result = _servicoPessoas.Adicionar(pessoa);
+
+            if (!result.Success)
+            {
+                return BadRequest(new { errors = result.Errors });
+            }
+
+            return CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result.Data);
         }
+
 
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody] Pessoas pessoa)

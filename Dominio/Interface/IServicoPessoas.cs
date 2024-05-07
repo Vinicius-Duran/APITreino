@@ -5,7 +5,7 @@ namespace Dominio.Interface
 {
     public interface IServicoPessoas
     {
-        Pessoas Adicionar(Pessoas Pessoas);
+        OperationResult<Pessoas> Adicionar(Pessoas Pessoas);
         Pessoas Editar(Pessoas Pessoas);
         IEnumerable<Pessoas> Listar();
         Pessoas ObterPorId(int id);
