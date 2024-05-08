@@ -20,19 +20,19 @@ namespace Dominio.Interface
         {
             var result = new OperationResult<Pessoas>();
 
-            // Validação do nome
+
             if (string.IsNullOrEmpty(pessoa.Nome) || pessoa.Nome.Length < 5)
             {
                 result.Errors.Add("Nome deve conter ao menos 5 caracteres.");
             }
 
-            // Validação da idade
+
             if (pessoa.Idade.HasValue && pessoa.Idade < 18)
             {
                 result.Errors.Add("A pessoa deve ser maior de 18 anos.");
             }
 
-            // Validação do endereço
+
             if (string.IsNullOrEmpty(pessoa.Endereco?.rua) || pessoa.Endereco.rua.Length < 10)
             {
                 result.Errors.Add("A rua do endereço deve ter no mínimo 10 caracteres.");
@@ -43,7 +43,7 @@ namespace Dominio.Interface
                 result.Errors.Add("O número do endereço deve ser válido.");
             }
 
-            // Verifica se o endereço já existe
+
             var enderecoExistente = _context.Enderecos.FirstOrDefault(e =>
                 e.Cep == pessoa.Endereco.Cep &&
                 e.Estado == pessoa.Endereco.Estado &&
@@ -61,7 +61,7 @@ namespace Dominio.Interface
                 return result;
             }
 
-            // Adiciona a pessoa caso todas as validações passem
+
             _context.Set<Pessoas>().Add(pessoa);
             _context.SaveChanges();
             result.Success = true;
@@ -102,7 +102,7 @@ namespace Dominio.Interface
             return _context.Set<Pessoas>().Find(id);
         }
 
-        // Novos métodos para lidar com operações de endereço
+
 
         public Endereco AdicionarEndereco(int pessoaId, Endereco endereco)
         {

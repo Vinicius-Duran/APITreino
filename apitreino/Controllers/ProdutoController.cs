@@ -81,7 +81,7 @@ namespace apitreino.Controllers
 
         // Novos métodos para manipular operações de endereço
 
-        [HttpPost("{pessoaId}/endereco")]
+        /*[HttpPost("{pessoaId}/endereco")]
         public IActionResult AdicionarEndereco(int pessoaId, [FromBody] Endereco endereco)
         {
             try
@@ -107,6 +107,6 @@ namespace apitreino.Controllers
             {
                 return NotFound(ex.Message);
             }
-        }
+        }*/
     }
 }

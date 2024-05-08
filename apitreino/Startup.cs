@@ -32,8 +32,9 @@ namespace apitreino
             });
             services.AddCors();
             services.AddScoped<IServicoPessoas, ServicoPessoas>();
+            services.AddScoped<IServicoEndereco, ServicoEndereco>();
 
-           
+
 
         }
 
