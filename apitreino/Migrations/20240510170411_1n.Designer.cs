@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using apitreino;
 
@@ -11,9 +12,11 @@ using apitreino;
 namespace apitreino.Migrations
 {
     [DbContext(typeof(APIContexto))]
-    partial class APIContextoModelSnapshot : ModelSnapshot
+    [Migration("20240510170411_1n")]
+    partial class _1n
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,7 +61,7 @@ namespace apitreino.Migrations
                     b.Property<string>("Estado")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PessoaId")
+                    b.Property<int?>("PessoasId")
                         .HasColumnType("int");
 
                     b.Property<int?>("numero")
@@ -69,20 +72,16 @@ namespace apitreino.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PessoaId");
+                    b.HasIndex("PessoasId");
 
                     b.ToTable("Enderecos");
                 });
 
             modelBuilder.Entity("apitreino.Endereco", b =>
                 {
-                    b.HasOne("Dominio.Entidades.Pessoas", "Pessoa")
+                    b.HasOne("Dominio.Entidades.Pessoas", null)
                         .WithMany("Enderecos")
-                        .HasForeignKey("PessoaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pessoa");
+                        .HasForeignKey("PessoasId");
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Pessoas", b =>

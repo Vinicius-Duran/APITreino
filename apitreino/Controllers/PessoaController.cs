@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Dominio.Interface;
 using Dominio.Entidades;
-using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace apitreino.Controllers
 {
@@ -79,20 +79,19 @@ namespace apitreino.Controllers
             return Ok(pessoa);
         }
 
-        // Novos métodos para manipular operações de endereço
+        // Métodos para manipular operações de endereço
 
-        /*[HttpPost("{pessoaId}/endereco")]
+        [HttpPost("{pessoaId}/endereco")]
         public IActionResult AdicionarEndereco(int pessoaId, [FromBody] Endereco endereco)
         {
-            try
+            var result = _servicoPessoas.AdicionarEndereco(pessoaId, endereco);
+
+            if (!result.Success)
             {
-                var enderecoAdicionado = _servicoPessoas.AdicionarEndereco(pessoaId, endereco);
-                return CreatedAtAction(nameof(GetEndereco), new { pessoaId }, enderecoAdicionado);
+                return BadRequest(new { errors = result.Errors });
             }
-            catch (InvalidOperationException ex)
-            {
-                return NotFound(ex.Message);
-            }
+
+            return CreatedAtAction(nameof(GetEndereco), new { pessoaId }, result.Data);
         }
 
         [HttpGet("{pessoaId}/endereco")]
@@ -107,6 +106,6 @@ namespace apitreino.Controllers
             {
                 return NotFound(ex.Message);
             }
-        }*/
+        }
     }
 }

@@ -10,7 +10,7 @@ namespace Dominio.Interface
         IEnumerable<Pessoas> Listar();
         Pessoas ObterPorId(int id);
         void Remover(int id);
-        Endereco AdicionarEndereco(int pessoaId, Endereco endereco);
+        OperationResult<Endereco> AdicionarEndereco(int pessoaId, Endereco endereco);
         Endereco ObterEndereco(int pessoaId);
 
     }

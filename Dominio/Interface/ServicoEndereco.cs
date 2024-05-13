@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Dominio.Interface
 {
@@ -18,70 +16,36 @@ namespace Dominio.Interface
             _context = context;
         }
 
-        public Endereco Adicionar(int pessoaId, Endereco endereco)
+        public Endereco Adicionar(Endereco endereco)
         {
-            var pessoa = _context.Set<Pessoas>().Find(pessoaId);
-            if (pessoa != null)
-            {
-                pessoa.Endereco = endereco;
-                _context.SaveChanges();
-                return endereco;
-            }
-            else
-            {
-                throw new InvalidOperationException("Pessoa não encontrada para adicionar endereço.");
-            }
+            _context.Enderecos.Add(endereco);
+            _context.SaveChanges();
+            return endereco;
         }
 
-        public Endereco Editar(int pessoaId, Endereco endereco)
+        public Endereco Editar(Endereco endereco)
         {
-            var pessoa = _context.Set<Pessoas>().Find(pessoaId);
-            if (pessoa != null)
-            {
-                pessoa.Endereco = endereco;
-                _context.Entry(endereco).State = EntityState.Modified;
-                _context.SaveChanges();
-                return endereco;
-            }
-            else
-            {
-                throw new InvalidOperationException("Pessoa não encontrada para editar o endereço.");
-            }
+            _context.Entry(endereco).State = EntityState.Modified;
+            _context.SaveChanges();
+            return endereco;
         }
-
 
         public IEnumerable<Endereco> Listar()
         {
-            return _context.Set<Endereco>().ToList();
+            return _context.Enderecos.ToList();
         }
 
-        public Endereco ObterPorId(int pessoaId)
+        public Endereco ObterPorId(int id)
         {
-            var pessoa = _context.Set<Pessoas>().Find(pessoaId);
-            if (pessoa != null)
-            {
-                return pessoa.Endereco;
-            }
-            else
-            {
-                throw new InvalidOperationException("Pessoa não encontrada para obter endereço.");
-            }
+            return _context.Enderecos.Find(id);
         }
 
-        public void Remover(int pessoaId, int enderecoId)
+        public void Remover(int id)
         {
-            var pessoa = _context.Pessoass.Include(p => p.Endereco).FirstOrDefault(p => p.Id == pessoaId);
-
-            if (pessoa != null && pessoa.Endereco != null && pessoa.Endereco.Id == enderecoId)
+            var endereco = _context.Enderecos.Find(id);
+            if (endereco != null)
             {
-                pessoa.Endereco = null; 
-
-               
-                if (pessoa.Endereco != null)
-                {
-                    _context.Enderecos.Remove(pessoa.Endereco); 
-                }
-
+                _context.Enderecos.Remove(endereco);
                 _context.SaveChanges();
             }
             else
@@ -89,6 +53,5 @@ namespace Dominio.Interface
                 throw new InvalidOperationException("Endereço não encontrado para remoção.");
             }
         }
-
     }
 }

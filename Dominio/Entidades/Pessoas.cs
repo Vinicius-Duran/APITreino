@@ -8,8 +8,7 @@ namespace Dominio.Entidades
         public string? Nome { get; set; }
         public int? Idade { get; set; }
 
-        public int EnderecoId { get; set; }
-        public virtual Endereco Endereco { get; set; }
+        public virtual ICollection<Endereco> Enderecos { get; set; }
 
     }
 

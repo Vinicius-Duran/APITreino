@@ -14,13 +14,13 @@ namespace apitreino.Controllers
             _servicoEndereco = servicoEndereco;
         }
 
-        [HttpPost("{pessoaId}")]
-        public IActionResult Adicionar(int pessoaId, [FromBody] Endereco endereco)
+        [HttpPost]
+        public IActionResult Adicionar([FromBody] Endereco endereco)
         {
             try
             {
-                var novoEndereco = _servicoEndereco.Adicionar(pessoaId, endereco);
-                return CreatedAtAction(nameof(ObterPorId), new { pessoaId = pessoaId }, novoEndereco);
+                var novoEndereco = _servicoEndereco.Adicionar(endereco);
+                return CreatedAtAction(nameof(ObterPorId), new { id = novoEndereco.Id }, novoEndereco);
             }
             catch (InvalidOperationException ex)
             {
@@ -28,12 +28,13 @@ namespace apitreino.Controllers
             }
         }
 
-        [HttpPut("{pessoaId}")]
-        public IActionResult Editar(int pessoaId, [FromBody] Endereco endereco)
+        [HttpPut("{id}")]
+        public IActionResult Editar(int id, [FromBody] Endereco endereco)
         {
             try
             {
-                var enderecoEditado = _servicoEndereco.Editar(pessoaId, endereco);
+                endereco.Id = id; // Defina o ID do endereço para corresponder ao ID fornecido na rota
+                var enderecoEditado = _servicoEndereco.Editar(endereco);
                 return Ok(enderecoEditado);
             }
             catch (InvalidOperationException ex)
@@ -49,12 +50,12 @@ namespace apitreino.Controllers
             return Ok(enderecos);
         }
 
-        [HttpGet("{pessoaId}")]
-        public IActionResult ObterPorId(int pessoaId)
+        [HttpGet("{id}")]
+        public IActionResult ObterPorId(int id)
         {
             try
             {
-                var endereco = _servicoEndereco.ObterPorId(pessoaId);
+                var endereco = _servicoEndereco.ObterPorId(id);
                 return Ok(endereco);
             }
             catch (InvalidOperationException ex)
@@ -63,12 +64,12 @@ namespace apitreino.Controllers
             }
         }
 
-        [HttpDelete("{pessoaId}/{Id}")]
-        public IActionResult Remover(int pessoaId, int Id)
+        [HttpDelete("{id}")]
+        public IActionResult Remover(int id)
         {
             try
             {
-                _servicoEndereco.Remover(pessoaId, Id);
+                _servicoEndereco.Remover(id);
                 return NoContent();
             }
             catch (InvalidOperationException ex)
