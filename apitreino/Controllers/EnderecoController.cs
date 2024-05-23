@@ -14,30 +14,32 @@ namespace apitreino.Controllers
             _servicoEndereco = servicoEndereco;
         }
 
-        [HttpPost]
-        public IActionResult Adicionar([FromBody] Endereco endereco)
+        [HttpPost("{pessoaId}/Adicionar")]
+        public IActionResult AdicionarEndereco(int pessoaId, [FromBody] EnderecoDTO enderecoDTO)
         {
             try
             {
-                var novoEndereco = _servicoEndereco.Adicionar(endereco);
+                var novoEndereco = _servicoEndereco.Adicionar(pessoaId, enderecoDTO);
                 return CreatedAtAction(nameof(ObterPorId), new { id = novoEndereco.Id }, novoEndereco);
             }
-            catch (InvalidOperationException ex)
+            catch (ExceptionEndereco ex)
             {
-                return BadRequest(new { error = ex.Message });
+                return StatusCode(ex.StatusCode, new { error = ex.Message });
             }
         }
 
         [HttpPut("{id}")]
-        public IActionResult Editar(int id, [FromBody] Endereco endereco)
+        public IActionResult Editar(int id, [FromBody] EnderecoDTO enderecoDTO)
         {
+            if (id != enderecoDTO.Id)
+                return BadRequest(new { error = "ID mismatch" });
+
             try
             {
-                endereco.Id = id; // Defina o ID do endereço para corresponder ao ID fornecido na rota
-                var enderecoEditado = _servicoEndereco.Editar(endereco);
+                var enderecoEditado = _servicoEndereco.Editar(enderecoDTO);
                 return Ok(enderecoEditado);
             }
-            catch (InvalidOperationException ex)
+            catch (ExceptionEndereco ex)
             {
                 return BadRequest(new { error = ex.Message });
             }

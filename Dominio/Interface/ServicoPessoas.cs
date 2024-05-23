@@ -1,7 +1,6 @@
 ﻿using apitreino;
 using Dominio.Entidades;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,121 +15,124 @@ namespace Dominio.Interface
             _context = context;
         }
 
-        public OperationResult<Pessoas> Adicionar(Pessoas pessoa)
+        public PessoaDTO Adicionar(PessoaDTO pessoaDTO)
         {
-            var result = new OperationResult<Pessoas>();
 
-            // Validações
-            if (string.IsNullOrEmpty(pessoa.Nome) || pessoa.Nome.Length < 5)
-                result.Errors.Add("Nome deve conter ao menos 5 caracteres.");
+            var erros = new List<string>();
 
-            if (pessoa.Idade.HasValue && pessoa.Idade < 18)
-                result.Errors.Add("A pessoa deve ser maior de 18 anos.");
-
-            if (pessoa.Enderecos == null || !pessoa.Enderecos.Any())
-                result.Errors.Add("É necessário fornecer pelo menos um endereço.");
-
-            if (pessoa.Enderecos.Any(e =>
-                string.IsNullOrEmpty(e.rua) || e.rua.Length < 10 ||
-                e.numero <= 0))
+            if (string.IsNullOrEmpty(pessoaDTO.Nome) || pessoaDTO.Nome.Length < 5)
             {
-                result.Errors.Add("Endereço inválido.");
+                erros.Add("Nome deve conter ao menos 5 caracteres");
             }
 
-            if (result.Errors.Any())
+            if (pessoaDTO.Idade.HasValue && pessoaDTO.Idade < 18)
             {
-                result.Success = false;
-                return result;
+                erros.Add("A pessoa deve ser maior de 18 anos.");
             }
 
-            // Adicionar pessoa
-            _context.Pessoass.Add(pessoa);
+            if (erros.Any())
+            {
+                throw new ServiceException(string.Join("; ", erros), 400);
+            }
+
+            var pessoa = new Pessoas
+            {
+                Nome = pessoaDTO.Nome,
+                Idade = pessoaDTO.Idade
+            };
+
+            _context.Set<Pessoas>().Add(pessoa);
             _context.SaveChanges();
 
-            result.Success = true;
-            result.Data = pessoa;
-
-            return result;
+            pessoaDTO.Id = pessoa.Id;
+            return pessoaDTO;
         }
 
-        public Pessoas Editar(Pessoas pessoa)
+        public PessoaDTO Editar(PessoaDTO pessoaDTO)
         {
-            _context.Entry(pessoa).State = EntityState.Modified;
-            _context.SaveChanges();
-            return pessoa;
+
+            var erros = new List<string>();
+
+            if (string.IsNullOrEmpty(pessoaDTO.Nome) || pessoaDTO.Nome.Length < 5)
+            {
+                erros.Add("Nome deve conter ao menos 5 caracteres");
+            }
+
+            if (pessoaDTO.Idade.HasValue && pessoaDTO.Idade < 18)
+            {
+                erros.Add("A pessoa deve ser maior de 18 anos.");
+            }
+
+            if (erros.Any())
+            {
+                throw new ServiceException(string.Join("; ", erros), 400);
+            }
+
+            var pessoa = _context.Set<Pessoas>().Find(pessoaDTO.Id);
+            if (pessoa != null)
+            {
+                pessoa.Nome = pessoaDTO.Nome;
+                pessoa.Idade = pessoaDTO.Idade;
+
+                _context.Entry(pessoa).State = EntityState.Modified;
+                _context.SaveChanges();
+            }
+
+            return pessoaDTO;
         }
 
-        public IEnumerable<Pessoas> Listar()
+        public IEnumerable<PessoaDTO> Listar()
         {
-            return _context.Pessoass.ToList();
+            return _context.Pessoass.Include(p => p.Enderecos).Select(p => new PessoaDTO
+            {
+                Id = p.Id,
+                Nome = p.Nome,
+                Idade = p.Idade,
+                Enderecos = p.Enderecos.Select(e => new EnderecoDTO
+                {
+                    Id = e.Id,
+                    Cep = e.Cep,
+                    Estado = e.Estado,
+                    Rua = e.rua,
+                    Numero = e.numero,
+                    PessoaId = e.PessoaId
+                }).ToList()
+            }).ToList();
+        }
+
+        public PessoaDTO ObterPorId(int id)
+        {
+            var pessoa = _context.Pessoass.Include(p => p.Enderecos).FirstOrDefault(p => p.Id == id);
+            if (pessoa == null)
+                {
+                throw new ServiceException("Pessoa não encontrada.", 404);
+            }
+
+            return new PessoaDTO
+            {
+                Id = pessoa.Id,
+                Nome = pessoa.Nome,
+                Idade = pessoa.Idade,
+                Enderecos = pessoa.Enderecos.Select(e => new EnderecoDTO
+                {
+                    Id = e.Id,
+                    Cep = e.Cep,
+                    Estado = e.Estado,
+                    Rua = e.rua,
+                    Numero = e.numero,
+                    PessoaId = e.PessoaId
+                }).ToList()
+            };
         }
 
         public void Remover(int id)
         {
-            var pessoa = _context.Pessoass.Find(id);
+            var pessoa = _context.Set<Pessoas>().Find(id);
             if (pessoa != null)
             {
-                _context.Pessoass.Remove(pessoa);
+                _context.Set<Pessoas>().Remove(pessoa);
                 _context.SaveChanges();
             }
-            else
-            {
-                throw new InvalidOperationException("Pessoa não encontrada para remoção.");
-            }
-        }
-
-        public Pessoas ObterPorId(int id)
-        {
-            return _context.Pessoass.Find(id);
-        }
-
-        public OperationResult<Endereco> AdicionarEndereco(int pessoaId, Endereco endereco)
-        {
-            var result = new OperationResult<Endereco>();
-
-            var pessoa = _context.Pessoass.Include(p => p.Enderecos).FirstOrDefault(p => p.Id == pessoaId);
-            if (pessoa != null)
-            {
-                if (pessoa.Enderecos == null)
-                    pessoa.Enderecos = new List<Endereco>();
-
-                pessoa.Enderecos.Add(endereco);
-                _context.SaveChanges();
-                result.Success = true;
-                result.Data = endereco;
-            }
-            else
-            {
-                result.Success = false;
-                result.Errors.Add("Pessoa não encontrada para adicionar endereço.");
-            }
-
-            return result;
-        }
-
-        public Endereco ObterEndereco(int pessoaId)
-        {
-            var pessoa = _context.Pessoass.Find(pessoaId);
-            if (pessoa != null)
-            {
-                return pessoa.Enderecos.FirstOrDefault();
-            }
-            else
-            {
-                throw new InvalidOperationException("Pessoa não encontrada para obter endereço.");
-            }
-        }
-    }
-
-    public class OperationResult<T>
-    {
-        public bool Success { get; set; }
-        public T Data { get; set; }
-        public List<string> Errors { get; set; }
-
-        public OperationResult()
-        {
-            Errors = new List<string>();
         }
     }
 }

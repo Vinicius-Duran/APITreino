@@ -5,13 +5,10 @@ namespace Dominio.Interface
 {
     public interface IServicoPessoas
     {
-        OperationResult<Pessoas> Adicionar(Pessoas Pessoas);
-        Pessoas Editar(Pessoas Pessoas);
-        IEnumerable<Pessoas> Listar();
-        Pessoas ObterPorId(int id);
+        PessoaDTO Adicionar(PessoaDTO pessoaDTO);
+        PessoaDTO Editar(PessoaDTO pessoaDTO);
+        IEnumerable<PessoaDTO> Listar();
+        PessoaDTO ObterPorId(int id);
         void Remover(int id);
-        OperationResult<Endereco> AdicionarEndereco(int pessoaId, Endereco endereco);
-        Endereco ObterEndereco(int pessoaId);
-
     }
 }

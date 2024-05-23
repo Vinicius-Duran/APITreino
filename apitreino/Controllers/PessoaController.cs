@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dominio.Entidades;
 using Dominio.Interface;
-using Dominio.Entidades;
-using System;
+using Microsoft.AspNetCore.Mvc;
 
 namespace apitreino.Controllers
 {
@@ -16,95 +15,70 @@ namespace apitreino.Controllers
             _servicoPessoas = servicoPessoas;
         }
 
+        [HttpPost]
+        public IActionResult Adicionar([FromBody] PessoaDTO pessoaDTO)
+        {
+            try
+            {
+                var pessoa = _servicoPessoas.Adicionar(pessoaDTO);
+                return CreatedAtAction(nameof(ObterPorId), new { id = pessoa.Id }, pessoa);
+            }
+            catch (ServiceException ex)
+            {
+                Response.Headers.Add("X-Error", ex.Message);
+                return StatusCode(ex.StatusCode, new { error = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Editar([FromBody] PessoaDTO pessoaDTO)
+        {
+            try
+            {
+                var pessoa = _servicoPessoas.Editar(pessoaDTO);
+                return Ok(pessoa);
+            }
+            catch (ServiceException ex)
+            {
+                Response.Headers.Add("X-Error", ex.Message);
+                return StatusCode(ex.StatusCode, new { error = ex.Message });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult ObterPorId(int id)
+        {
+            try
+            {
+                var pessoa = _servicoPessoas.ObterPorId(id);
+                return Ok(pessoa);
+            }
+            catch (ServiceException ex)
+            {
+                Response.Headers.Add("X-Error", ex.Message);
+                return StatusCode(ex.StatusCode, new { error = ex.Message });
+            }
+        }
+
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Listar()
         {
             var pessoas = _servicoPessoas.Listar();
             return Ok(pessoas);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult Get(int id)
-        {
-            var pessoa = _servicoPessoas.ObterPorId(id);
-            if (pessoa == null)
-            {
-                return NotFound();
-            }
-            return Ok(pessoa);
-        }
-
-        [HttpPost]
-        public IActionResult Post([FromBody] Pessoas pessoa)
-        {
-            var result = _servicoPessoas.Adicionar(pessoa);
-
-            if (!result.Success)
-            {
-                return BadRequest(new { errors = result.Errors });
-            }
-
-            return CreatedAtAction(nameof(Get), new { id = result.Data.Id }, result.Data);
-        }
-
-
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] Pessoas pessoa)
-        {
-            if (id != pessoa.Id)
-            {
-                return BadRequest();
-            }
-
-            var pessoaExistente = _servicoPessoas.ObterPorId(id);
-            if (pessoaExistente == null)
-            {
-                return NotFound();
-            }
-
-            var pessoaAtualizada = _servicoPessoas.Editar(pessoa);
-            return NoContent();
-        }
-
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            var pessoa = _servicoPessoas.ObterPorId(id);
-            if (pessoa == null)
-            {
-                return NotFound();
-            }
-
-            _servicoPessoas.Remover(id);
-            return Ok(pessoa);
-        }
-
-        // Métodos para manipular operações de endereço
-
-        [HttpPost("{pessoaId}/endereco")]
-        public IActionResult AdicionarEndereco(int pessoaId, [FromBody] Endereco endereco)
-        {
-            var result = _servicoPessoas.AdicionarEndereco(pessoaId, endereco);
-
-            if (!result.Success)
-            {
-                return BadRequest(new { errors = result.Errors });
-            }
-
-            return CreatedAtAction(nameof(GetEndereco), new { pessoaId }, result.Data);
-        }
-
-        [HttpGet("{pessoaId}/endereco")]
-        public IActionResult GetEndereco(int pessoaId)
+        public IActionResult Remover(int id)
         {
             try
             {
-                var endereco = _servicoPessoas.ObterEndereco(pessoaId);
-                return Ok(endereco);
+                _servicoPessoas.Remover(id);
+                return NoContent();
             }
-            catch (InvalidOperationException ex)
+            catch (ServiceException ex)
             {
-                return NotFound(ex.Message);
+                Response.Headers.Add("X-Error", ex.Message);
+                return StatusCode(ex.StatusCode, new { error = ex.Message });
             }
         }
     }

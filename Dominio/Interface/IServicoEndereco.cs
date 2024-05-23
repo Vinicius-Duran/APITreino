@@ -5,11 +5,10 @@ namespace Dominio.Interface
 {
     public interface IServicoEndereco
     {
-        Endereco Adicionar(Endereco endereco);
-        Endereco Editar(Endereco endereco);
-        IEnumerable<Endereco> Listar();
-        Endereco ObterPorId(int id);
+        EnderecoDTO Adicionar(int pessoaId, EnderecoDTO enderecoDTO);
+        EnderecoDTO Editar(EnderecoDTO enderecoDTO);
+        IEnumerable<EnderecoDTO> Listar();
+        EnderecoDTO ObterPorId(int id);
         void Remover(int id);
-
     }
 }
